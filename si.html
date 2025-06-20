@@ -1,0 +1,356 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>UC Tablero</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@300;400;600;700&display=swap" rel="stylesheet">
+
+    <style>
+        /* --- Estilos Generales --- */
+        body {
+            font-family: 'Open Sans', sans-serif;
+            margin: 0;
+            background-color: #f5f5f5;
+            color: #333;
+            overflow-y: scroll; /* Asegura que la barra de scroll siempre sea visible */
+        }
+
+        .dashboard-container {
+            display: flex;
+        }
+
+        /* --- Sidebar Izquierda --- */
+        .sidebar {
+            width: 80px;
+            background-color: #1c2b36;
+            color: white;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding-top: 20px;
+            height: 100vh;
+            position: fixed;
+            left: 0;
+            top: 0;
+        }
+
+        /* Se eliminó .sidebar .profile-pic */
+
+        .sidebar ul {
+            list-style: none;
+            padding: 0;
+            width: 100%;
+            margin: 0;
+        }
+
+        .sidebar ul li {
+            width: 100%;
+            text-align: center;
+            padding: 15px 0;
+        }
+
+        .sidebar ul li.active {
+            background-color: #3a4a58;
+            border-left: 4px solid #e40e31;
+            padding-left: 0; /* Ajuste para que el borde no mueva el contenido */
+        }
+        
+        .sidebar ul li.active a {
+            color: #fff;
+        }
+
+        .sidebar ul li a {
+            color: #d1d1d1;
+            text-decoration: none;
+            font-size: 0.75rem;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .sidebar ul li a i {
+            font-size: 1.5rem;
+            margin-bottom: 5px;
+        }
+
+        .sidebar-footer {
+            margin-top: auto;
+            padding-bottom: 20px;
+        }
+
+        .sidebar-footer button {
+            background: none;
+            border: 1px solid #fff;
+            color: white;
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            cursor: pointer;
+        }
+
+        /* --- Contenedor Principal (derecha del sidebar) --- */
+        .content-wrapper {
+            display: flex;
+            flex-grow: 1;
+            margin-left: 80px; /* Mismo ancho que el sidebar */
+        }
+
+        /* --- Contenido Principal --- */
+        .main-content {
+            flex-grow: 1;
+            padding: 20px;
+            max-width: 950px; /* Ancho máximo para el contenido central */
+        }
+
+        .main-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .main-header h1 {
+            margin: 0;
+            font-weight: 300;
+            font-size: 2rem;
+        }
+
+        .main-header h1 .uc-logo {
+            font-weight: bold;
+        }
+
+        .main-header .menu-dots {
+            background: none;
+            border: none;
+            font-size: 1.2rem;
+            cursor: pointer;
+        }
+
+        /* --- Cuadrícula de Cursos --- */
+        .course-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+            gap: 20px;
+        }
+
+        .course-card {
+            background-color: white;
+            border-radius: 4px;
+            overflow: hidden;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            display: flex;
+            flex-direction: column;
+            height: 280px; /* Altura fija para todas las tarjetas */
+        }
+
+        .course-card .card-header {
+            height: 140px;
+            position: relative;
+            background-size: cover;
+            background-position: center;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .course-card .card-header img {
+            max-width: 100%;
+            max-height: 100%;
+            object-fit: cover;
+        }
+
+        .course-card .card-header .menu-dots {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: rgba(0, 0, 0, 0.2);
+            border: none;
+            color: white;
+            border-radius: 50%;
+            width: 30px;
+            height: 30px;
+            cursor: pointer;
+            text-shadow: 0 1px 2px rgba(0,0,0,0.5);
+            font-size: 1rem;
+        }
+
+        .course-card .card-body {
+            padding: 15px;
+            flex-grow: 1;
+            border-bottom: 1px solid #eee;
+        }
+
+        .course-card .card-body h3 {
+            margin: 0 0 5px 0;
+            font-size: 1rem;
+            color: #007bff; /* Color de link más estándar */
+            font-weight: 600;
+        }
+
+        .course-card .card-body p {
+            margin: 0;
+            font-size: 0.8rem;
+            color: #666;
+        }
+
+        .course-card .card-footer {
+            padding: 10px 15px;
+            display: flex;
+            gap: 20px;
+        }
+
+        .course-card .card-footer i {
+            font-size: 1.2rem;
+            color: #666;
+            position: relative;
+        }
+
+        .course-card .card-footer i span {
+            position: absolute;
+            top: -8px;
+            right: -15px;
+            background-color: #e40e31;
+            color: white;
+            border-radius: 50%;
+            font-size: 0.7rem;
+            padding: 2px 6px;
+            font-weight: bold;
+        }
+
+        /* Se eliminaron los estilos de .right-sidebar ya que la sección completa será removida */
+    </style>
+</head>
+<body>
+    <div class="dashboard-container">
+        <nav class="sidebar">
+            <ul>
+                <li><a href="#"><i class="fas fa-user"></i> Cuenta</a></li>
+                <li class="active"><a href="#"><i class="fas fa-th-large"></i> Tablero</a></li>
+                <li><a href="#"><i class="fas fa-book"></i> Cursos</a></li>
+                <li><a href="#"><i class="fas fa-calendar-alt"></i> Calendario</a></li>
+                <li><a href="#"><i class="fas fa-inbox"></i> Bandeja de entrada</a></li>
+                <li><a href="#"><i class="fas fa-history"></i> Historial</a></li>
+                <li><a href="#"><i class="fas fa-chart-bar"></i> Encuestas de Docencia</a></li>
+                <li><a href="#"><i class="fas fa-question-circle"></i> Ayuda y soporte</a></li>
+            </ul>
+            <div class="sidebar-footer">
+                <button><i class="fas fa-chevron-left"></i></button>
+            </div>
+        </nav>
+
+        <div class="content-wrapper">
+            <main class="main-content">
+                <header class="main-header">
+                    <h1><span class="uc-logo">UC</span> Tablero</h1>
+                    <button class="menu-dots"><i class="fas fa-ellipsis-v"></i></button>
+                </header>
+                <div class="course-grid">
+                    <div class="course-card">
+                        <div class="card-header" style="background-color: #2a4a87;">
+                            <img src="https://i.imgur.com/vHqYfQI.png" alt="Ruta Novata" style="width: 150px; height: auto;">
+                            <button class="menu-dots"><i class="fas fa-ellipsis-v"></i></button>
+                        </div>
+                        <div class="card-body">
+                            <h3>Ruta Novata UC 2024</h3>
+                            <p>CUR-RUT-NOV-1_2024</p>
+                            <p>2025 Primer Semestre</p>
+                        </div>
+                        <div class="card-footer">
+                            <i class="fas fa-bullhorn"></i>
+                        </div>
+                    </div>
+                    <div class="course-card">
+                        <div class="card-header" style="background-color: #eaf3e2;">
+                             <img src="https://i.imgur.com/vU5wTq8.png" alt="Think Green" style="width: 120px; height: auto;">
+                            <button class="menu-dots" style="color: #333"><i class="fas fa-ellipsis-v"></i></button>
+                        </div>
+                        <div class="card-body">
+                            <h3>Cristianismo Crisis Ecologica</h3>
+                            <p>TTF222-1</p>
+                            <p>2025 Primer Semestre</p>
+                        </div>
+                        <div class="card-footer">
+                            <i class="fas fa-bullhorn"></i>
+                            <i class="fas fa-file-alt"></i>
+                        </div>
+                    </div>
+                    <div class="course-card">
+                        <div class="card-header" style="background-color: #e91e63;">
+                            <button class="menu-dots"><i class="fas fa-ellipsis-v"></i></button>
+                        </div>
+                        <div class="card-body">
+                            <h3>Algebra Lineal</h3>
+                            <p>MAT1203-3</p>
+                            <p>2025 Primer Semestre</p>
+                        </div>
+                        <div class="card-footer">
+                            <i class="fas fa-bullhorn"></i>
+                            <i class="fas fa-file-alt"></i>
+                        </div>
+                    </div>
+                    <div class="course-card">
+                        <div class="card-header" style="background-image: url('https://i.imgur.com/L3Fk12J.jpg');">
+                            <button class="menu-dots"><i class="fas fa-ellipsis-v"></i></button>
+                        </div>
+                        <div class="card-body">
+                            <h3>Estructuras de Datos y Algoritmos</h3>
+                            </h3>
+                            <p>EYP1050-2</p>
+                            <p>2025 Primer Semestre</p>
+                        </div>
+                        <div class="card-footer">
+                            <i class="fas fa-bullhorn"><span>28</span></i>
+                        </div>
+                    </div>
+                    <div class="course-card">
+                        <div class="card-header" style="background-color: #385244;">
+                            <button class="menu-dots"><i class="fas fa-ellipsis-v"></i></button>
+                        </div>
+                        <div class="card-body">
+                            <h3>Calculo I</h3>
+                            <p>MAT1606-3</p>
+                            <p>2025 Primer Semestre</p>
+                        </div>
+                           <div class="card-footer">
+                            <i class="fas fa-bullhorn"></i>
+                            <i class="fas fa-file-alt"></i>
+                        </div>
+                    </div>
+                    <div class="course-card">
+                        <div class="card-header" style="background-color: #8e44ad;">
+                            <button class="menu-dots"><i class="fas fa-ellipsis-v"></i></button>
+                        </div>
+                        <div class="card-body">
+                            <h3>Preparación Física y Recreacion</h3>
+                            <p>DPT5502-7</p>
+                            <p>2025 Primer Semestre</p>
+                        </div>
+                        <div class="card-footer">
+                            <i class="fas fa-bullhorn"></i>
+                            <i class="fas fa-file-alt"></i>
+                        </div>
+                    </div>
+                    <div class="course-card">
+                        <div class="card-header" style="background-color: #f39c12;"> <button class="menu-dots"><i class="fas fa-ellipsis-v"></i></button>
+                        </div>
+                        <div class="card-body">
+                            <h3>Bases de Datos</h3>
+                            <p>IIC2413-2</p>
+                            <p>2025 Primer Semestre</p>
+                        </div>
+                        <div class="card-footer">
+                            <i class="fas fa-bullhorn"></i>
+                            <i class="fas fa-file-alt"></i>
+                        </div>
+                    </div>
+                </div>
+            </main>
+
+            </div>
+    </div>
+</body>
+</html>
